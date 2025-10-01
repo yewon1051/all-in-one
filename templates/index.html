@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>월간미션 계산기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 토스 스타일 CSS 변수 정의 */
+        :root {
+            /* 토스 브랜드 컬러 */
+            --toss-blue: #3182f6;
+            --toss-blue-light: #e8f4fd;
+            --toss-blue-dark: #1e6feb;
+            
+            /* 그라데이션 */
+            --gradient-primary: linear-gradient(135deg, #3182f6 0%, #1e6feb 100%);
+            --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            
+            /* 중성 컬러 */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* 텍스트 컬러 */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --text-white: #ffffff;
+            
+            /* 배경 컬러 */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            
+            /* 상태 컬러 */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3182f6;
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-2xl: 24px;
+            --spacing-3xl: 32px;
+            --spacing-4xl: 40px;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            
+            /* Typography */
+            --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 12px;
+            --font-size-sm: 14px;
+            --font-size-base: 16px;
+            --font-size-lg: 18px;
+            --font-size-xl: 20px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 32px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --font-size-2xl: 24px;
+            --font-size-3xl: 36px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-secondary);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* 토스 스타일 헤더 */
+        .header {
+            background: var(--gradient-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-top {
+            color: var(--text-white);
+            padding: var(--spacing-3xl) var(--spacing-2xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-white);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top .page-title {
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            color: white;
+            margin: 0;
+        }
+
+        .content {
+            padding: var(--spacing-3xl) var(--spacing-2xl);
+        }
+
+        /* 토스 스타일 탭 네비게이션 */
+        .tab-navigation {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 var(--spacing-2xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: var(--spacing-xs);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-family: var(--font-family);
+            font-weight: 500;
+            color: var(--text-secondary);
+            position: relative;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .tab-button:hover:not(:disabled) {
+            background: var(--gray-50);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .tab-button.active {
+            background: var(--bg-primary);
+            color: var(--toss-blue);
+            border-bottom: 3px solid var(--toss-blue);
+            font-weight: 600;
+        }
+
+        .tab-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tab-icon {
+            font-size: var(--font-size-lg);
+        }
+
+        .tab-text {
+            font-size: var(--font-size-sm);
+        }
+
+        .tab-button.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+
+        /* 탭 콘텐츠 */
+        .tab-content {
+            position: relative;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 토스 스타일 폼 섹션 */
+        .form-section {
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-3xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .form-header h3 {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 var(--spacing-2xl) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .form-header h3::before {
+            content: '🎯';
+            font-size: var(--font-size-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: var(--spacing-2xl);
+            align-items: end;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* 토스 스타일 입력 필드 */
+        select, input {
+            width: 100%;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-weight: 500;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--toss-blue);
+            box-shadow: 0 0 0 4px var(--toss-blue-light);
+            transform: translateY(-1px);
+        }
+
+        select::placeholder, input::placeholder {
+            color: var(--text-tertiary);
+            font-weight: 400;
+        }
+
+        /* 토스 스타일 버튼 */
+        .btn {
+            background: var(--toss-blue);
+            color: var(--text-white);
+            border: none;
+            padding: var(--spacing-lg) var(--spacing-3xl);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: var(--font-family);
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            background: var(--toss-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: var(--toss-blue);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-blue-hover);
+        }
+
+        /* 토스 스타일 결과 섹션 */
+        .result-section {
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+            padding: var(--spacing-3xl);
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            color: var(--text-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .result-header h2 {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-white);
+            margin: 0 0 var(--spacing-lg) 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .target-km {
+            font-size: var(--font-size-3xl);
+            font-weight: 800;
+            color: var(--text-white);
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 토스 스타일 정보 카드 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-2xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .info-card {
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .info-card h3 {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 0 0 var(--spacing-md) 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card p {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--toss-blue);
+            margin: 0;
+        }
+
+        /* 토스 스타일 로딩 상태 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: var(--spacing-3xl);
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            margin: var(--spacing-2xl) 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--spacing-lg);
+            position: relative;
+        }
+
+        .spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--toss-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* 토스 스타일 에러 메시지 */
+        .error-message {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: var(--error);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+            border-left: 4px solid var(--error);
+            font-weight: 500;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .result-section {
+            display: none;
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .result-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .target-km {
+            font-size: 2em;
+            font-weight: 700;
+            color: #4facfe;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .info-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-card p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        /* Table Component */
+        .weekday-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--spacing-lg);
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .weekday-table th,
+        .weekday-table td {
+            padding: var(--spacing-md);
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .weekday-table th {
+            background: #f8f9fa;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .weekday-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .weekday-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .adjustment-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .adjustment-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .adjustment-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .adjustment-controls input {
+            width: 100px;
+        }
+        
+        /* Calendar Component */
+        .calendar {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--card-background);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header {
+            background: var(--primary-blue);
+            color: white;
+            padding: var(--spacing-lg);
+            text-align: center;
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #f8f9fa;
+        }
+
+        .calendar-weekday {
+            padding: var(--spacing-sm);
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-right: 1px solid var(--border-color);
+            font-size: var(--font-size-sm);
+        }
+
+        .calendar-weekday:last-child {
+            border-right: none;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-day {
+            padding: var(--spacing-md);
+            text-align: center;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: var(--font-size-sm);
+            color: var(--text-primary);
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+
+        .calendar-day:hover {
+            background: #e3f2fd;
+        }
+
+        .calendar-day.other-month {
+            color: var(--text-muted);
+            background: #f9f9f9;
+        }
+
+        .calendar-day.weekend {
+            background: #fff3e0;
+        }
+
+        .calendar-day.holiday {
+            background: #ffebee;
+            color: var(--error);
+            font-weight: 600;
+        }
+
+        .calendar-day.today {
+            background: #e8f5e8;
+            font-weight: 600;
+        }
+        
+        /* Weekday Input Component */
+        .weekday-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .weekday-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .weekday-input {
+            width: 60px;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-size: var(--font-size-base);
+            background: var(--card-background);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .weekday-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* Toast Message Components */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .toast {
+            background: var(--card-background);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid;
+            min-width: 300px;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+            color: #155724;
+        }
+
+        .toast.error {
+            border-left-color: var(--error);
+            color: #721c24;
+        }
+
+        .toast.info {
+            border-left-color: var(--info);
+            color: #0c5460;
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+            color: #856404;
+        }
+
+        .toast-icon {
+            font-size: var(--font-size-lg);
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .toast-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Legacy message styles (hidden by default) */
+        .error, .success {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .adjustment-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container">
+        <!-- 간단한 헤더 -->
+        <div class="header">
+            <div class="header-top">
+                <div class="logo">BUTFITGROUND</div>
+                <div class="page-title">업무 효율 도구</div>
+            </div>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="tab-navigation">
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="mission-calculator">
+                    <span class="tab-icon">🎯</span>
+                    <span class="tab-text">월간미션 계산기</span>
+                </button>
+                <button class="tab-button" data-tab="coming-soon" disabled>
+                    <span class="tab-icon">🚀</span>
+                    <span class="tab-text">추가 예정</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- 탭 콘텐츠 -->
+            <div class="tab-content">
+                <!-- 월간미션 계산기 탭 -->
+                <div class="tab-panel active" id="mission-calculator-tab">
+                    <div class="form-section">
+                <div class="form-header">
+                    <h3>월간미션 목표 계산</h3>
+                </div>
+                <form id="missionForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="year">연도</label>
+                            <select id="year" name="year" required>
+                                <option value="">연도 선택</option>
+                                <option value="2025">2025년</option>
+                                <option value="2026">2026년</option>
+                                <option value="2027">2027년</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="month">월</label>
+                            <select id="month" name="month" required>
+                                <option value="">월 선택</option>
+                                <option value="1">1월</option>
+                                <option value="2">2월</option>
+                                <option value="3">3월</option>
+                                <option value="4">4월</option>
+                                <option value="5">5월</option>
+                                <option value="6">6월</option>
+                                <option value="7">7월</option>
+                                <option value="8">8월</option>
+                                <option value="9">9월</option>
+                                <option value="10">10월</option>
+                                <option value="11">11월</option>
+                                <option value="12">12월</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn" id="calculateBtn">계산하기</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>월간미션 목표를 계산하고 있습니다...</p>
+                </div>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <div class="result-header">
+                    <h2 id="resultTitle">월간미션 목표</h2>
+                    <div class="target-km" id="targetKm">0 km</div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>📊 이전 달 데이터</h3>
+                        <p id="previousMonthInfo">-</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>📅 영업일수</h3>
+                        <p id="businessDaysInfo">-</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🎯 예상 달성 거리</h3>
+                        <p id="expectedKmInfo">-</p>
+                    </div>
+                </div>
+
+
+                <div class="adjustment-section" style="margin-top: 20px;">
+                    <h3>📅 영업일수 수동 조정</h3>
+                    
+                    <!-- 달력 표시 영역 -->
+                    <div id="calendarContainer" style="margin-bottom: 20px;">
+                        <div id="calendar" style="display: none;">
+                            <!-- 달력이 여기에 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 요일별 영업일수 조정 (가로 배치) -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 15px; color: #333;">요일별 영업일수</h4>
+                        <div id="weekdayAdjustmentContainer" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                            <!-- 요일별 영업일수 조정 입력 필드들이 여기에 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <button type="button" class="btn" id="applyWeekdayAdjustmentBtn">영업일수 조정 적용</button>
+                        <button type="button" class="btn" id="resetWeekdayAdjustmentBtn" style="background: #666; margin-left: 10px;">초기화</button>
+                    </div>
+                </div>
+
+                <div id="weekdayTableContainer" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">📈 요일별 분석</h3>
+                    <table class="weekday-table" id="weekdayTable">
+                        <thead>
+                            <tr>
+                                <th>요일</th>
+                                <th>영업일수</th>
+                                <th>평균 거리 (km)</th>
+                                <th>예상 총 거리 (km)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weekdayTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="branchTableContainer" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">🏢 지점별 요일별 분석</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="weekday-table" id="branchTable">
+                            <thead>
+                                <tr>
+                                    <th>지점명</th>
+                                    <th>요일</th>
+                                    <th>사용자수</th>
+                                    <th>총 거리 (km)</th>
+                                    <th>평균 거리 (km)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="branchTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <!-- 추가 예정 탭 -->
+                <div class="tab-panel" id="coming-soon-tab">
+                    <div class="form-section">
+                        <div class="form-header">
+                            <h3>🚀 새로운 기능이 곧 추가됩니다!</h3>
+                        </div>
+                        <div style="text-align: center; padding: var(--spacing-4xl); color: var(--text-secondary);">
+                            <div style="font-size: var(--font-size-3xl); margin-bottom: var(--spacing-xl);">🚧</div>
+                            <h4 style="color: var(--text-primary); margin-bottom: var(--spacing-lg);">개발 중인 기능들</h4>
+                            <p style="line-height: 1.6; margin-bottom: var(--spacing-xl);">
+                                더 많은 업무 효율 도구들이 준비 중입니다.<br>
+                                곧 새로운 기능들을 만나보실 수 있습니다!
+                            </p>
+                            <div style="background: var(--gray-50); padding: var(--spacing-xl); border-radius: var(--radius-md); margin-top: var(--spacing-xl);">
+                                <h5 style="color: var(--toss-blue); margin-bottom: var(--spacing-md);">예정된 기능들</h5>
+                                <ul style="text-align: left; display: inline-block; color: var(--text-secondary);">
+                                    <li>📊 사용자 조회 도구</li>
+                                    <li>📈 리포트 생성기</li>
+                                    <li>⚙️ 시스템 설정</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentResult = null;
+        let originalWeekdayBusinessDays = null;
+
+        // 탭 전환 기능
+        function initTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.disabled) return;
+
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // 모든 탭 버튼에서 active 클래스 제거
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // 모든 탭 패널에서 active 클래스 제거
+                    tabPanels.forEach(panel => panel.classList.remove('active'));
+                    
+                    // 클릭된 탭 버튼에 active 클래스 추가
+                    this.classList.add('active');
+                    
+                    // 해당 탭 패널에 active 클래스 추가
+                    const targetPanel = document.getElementById(targetTab + '-tab');
+                    if (targetPanel) {
+                        targetPanel.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // 페이지 로드 시 탭 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+        });
+
+        document.getElementById('missionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            
+            if (!year || !month) {
+                showError('연도와 월을 모두 선택해주세요.');
+                return;
+            }
+            
+            await calculateMission(year, month);
+        });
+
+
+        document.getElementById('applyWeekdayAdjustmentBtn').addEventListener('click', async function() {
+            if (!currentResult) {
+                showError('먼저 월간미션을 계산해주세요.');
+                return;
+            }
+            
+            const adjustedWeekdayBusinessDays = getAdjustedWeekdayBusinessDays();
+            const year = currentResult.year;
+            const month = currentResult.month;
+            
+            await calculateMissionWithCustomWeekdays(year, month, adjustedWeekdayBusinessDays);
+        });
+
+        document.getElementById('resetWeekdayAdjustmentBtn').addEventListener('click', function() {
+            if (originalWeekdayBusinessDays) {
+                createWeekdayAdjustmentInputs(originalWeekdayBusinessDays);
+                showSuccess('영업일수가 초기값으로 리셋되었습니다.');
+            }
+        });
+
+        async function calculateMission(year, month) {
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        year: parseInt(year),
+                        month: parseInt(month),
+                        adjustment_factor: 1.0
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentResult = result;
+                    displayResult(result);
+                    showSuccess('월간미션 목표가 성공적으로 계산되었습니다!');
+                } else {
+                    showError(result.error || '계산 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                showError('서버와의 통신 중 오류가 발생했습니다: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayResult(result) {
+            // 결과 섹션 표시
+            document.getElementById('resultSection').style.display = 'block';
+            
+            // 제목 업데이트
+            document.getElementById('resultTitle').textContent = 
+                `${result.year}년 ${result.month}월 월간미션 목표`;
+            
+            // 목표 거리 업데이트
+            document.getElementById('targetKm').textContent = 
+                `${result.adjusted_target.toLocaleString()} km`;
+            
+            // 정보 카드 업데이트
+            document.getElementById('previousMonthInfo').innerHTML = 
+                `${result.previous_month_data.year}년 ${result.previous_month_data.month}월<br>
+                 총 ${result.previous_month_data.total_records}건의 기록`;
+            
+            document.getElementById('businessDaysInfo').textContent = 
+                `${result.business_days}일`;
+            
+            document.getElementById('expectedKmInfo').textContent = 
+                `${result.expected_km.toLocaleString()} km`;
+            
+            
+            // 원본 영업일수 저장
+            originalWeekdayBusinessDays = result.weekday_business_days;
+            
+            // 달력 생성
+            createCalendar(result.year, result.month);
+            
+            // 요일별 조정 입력 필드 생성
+            createWeekdayAdjustmentInputs(result.weekday_business_days);
+            
+            // 요일별 테이블 업데이트
+            updateWeekdayTable(result);
+            
+            // 지점별 테이블 업데이트
+            updateBranchTable(result);
+        }
+
+        function updateWeekdayTable(result) {
+            const tbody = document.getElementById('weekdayTableBody');
+            tbody.innerHTML = '';
+            
+            const weekdayNames = {
+                'Mon': '월요일',
+                'Tue': '화요일', 
+                'Wed': '수요일',
+                'Thu': '목요일',
+                'Fri': '금요일',
+                'Sat': '토요일',
+                'Sun': '일요일'
+            };
+            
+            for (const [weekday, days] of Object.entries(result.weekday_business_days)) {
+                const row = document.createElement('tr');
+                const avgDistance = result.previous_month_data.weekday_averages[weekday] || 0;
+                const expectedDistance = avgDistance * days;
+                
+                row.innerHTML = `
+                    <td>${weekdayNames[weekday] || weekday}</td>
+                    <td>${days}일</td>
+                    <td>${avgDistance.toFixed(2)} km</td>
+                    <td>${expectedDistance.toFixed(2)} km</td>
+                `;
+                
+                tbody.appendChild(row);
+            }
+        }
+
+        function updateBranchTable(result) {
+            const tbody = document.getElementById('branchTableBody');
+            tbody.innerHTML = '';
+            
+            const weekdayNames = {
+                'Mon': '월요일',
+                'Tue': '화요일', 
+                'Wed': '수요일',
+                'Thu': '목요일',
+                'Fri': '금요일',
+                'Sat': '토요일',
+                'Sun': '일요일'
+            };
+            
+            if (result.branch_weekday_data && result.branch_weekday_data.length > 0) {
+                result.branch_weekday_data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row[0] || '-'}</td>
+                        <td>${weekdayNames[row[1]] || row[1]}</td>
+                        <td>${row[2] || 0}명</td>
+                        <td>${parseFloat(row[3] || 0).toFixed(2)} km</td>
+                        <td>${parseFloat(row[4] || 0).toFixed(2)} km</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="5" style="text-align: center; color: #666;">지점별 데이터가 없습니다.</td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('calculateBtn').disabled = show;
+        }
+
+        // Toast Message Functions
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || icons.info}</span>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="closeToast(this)">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Auto remove
+            setTimeout(() => {
+                closeToast(toast.querySelector('.toast-close'));
+            }, duration);
+        }
+
+        function closeToast(closeButton) {
+            const toast = closeButton.closest('.toast');
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+
+        function showError(message) {
+            showToast(message, 'error', 4000);
+        }
+
+        function showSuccess(message) {
+            showToast(message, 'success', 3000);
+        }
+
+        function hideMessages() {
+            // Legacy function - now handled by toast
+        }
+
+        function createWeekdayAdjustmentInputs(weekdayBusinessDays) {
+            const container = document.getElementById('weekdayAdjustmentContainer');
+            container.innerHTML = '';
+            
+            const weekdayNames = {
+                'Mon': '월',
+                'Tue': '화', 
+                'Wed': '수',
+                'Thu': '목',
+                'Fri': '금',
+                'Sat': '토',
+                'Sun': '일'
+            };
+            
+            const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            
+            weekdays.forEach(weekday => {
+                if (weekdayBusinessDays[weekday] !== undefined) {
+                    const div = document.createElement('div');
+                    div.className = 'weekday-input-group';
+                    
+                    div.innerHTML = `
+                        <div class="weekday-label">${weekdayNames[weekday]}</div>
+                        <input type="number" 
+                               class="weekday-input"
+                               id="weekday_${weekday}" 
+                               value="${weekdayBusinessDays[weekday]}" 
+                               min="0" 
+                               max="31">
+                    `;
+                    
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function getAdjustedWeekdayBusinessDays() {
+            const adjusted = {};
+            const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            
+            weekdays.forEach(weekday => {
+                const input = document.getElementById(`weekday_${weekday}`);
+                if (input) {
+                    adjusted[weekday] = parseInt(input.value) || 0;
+                }
+            });
+            
+            return adjusted;
+        }
+
+        async function calculateMissionWithCustomWeekdays(year, month, customWeekdayBusinessDays) {
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                // 클라이언트에서 직접 계산
+                const result = { ...currentResult };
+                result.weekday_business_days = customWeekdayBusinessDays;
+                
+                // 새로운 예상 거리 계산
+                let totalExpectedKm = 0;
+                for (const [weekday, days] of Object.entries(customWeekdayBusinessDays)) {
+                    if (result.previous_month_data.weekday_averages[weekday]) {
+                        totalExpectedKm += result.previous_month_data.weekday_averages[weekday] * days;
+                    }
+                }
+                
+                result.expected_km = Math.round(totalExpectedKm * 100) / 100;
+                result.adjusted_target = Math.round(result.expected_km * 100) / 100;
+                result.adjustment_factor = 1.0;
+                
+                // 총 영업일수 재계산
+                result.business_days = Object.values(customWeekdayBusinessDays).reduce((sum, days) => sum + days, 0);
+                
+                currentResult = result;
+                displayResult(result);
+                showSuccess('영업일수 조정이 적용되었습니다!');
+                
+            } catch (error) {
+                showError('영업일수 조정 중 오류가 발생했습니다: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 달력 생성 함수
+        function createCalendar(year, month) {
+            const calendarContainer = document.getElementById('calendar');
+            const calendar = document.createElement('div');
+            calendar.className = 'calendar';
+            
+            // 달력 헤더
+            const header = document.createElement('div');
+            header.className = 'calendar-header';
+            header.textContent = `${year}년 ${month}월`;
+            calendar.appendChild(header);
+            
+            // 요일 헤더
+            const weekdays = document.createElement('div');
+            weekdays.className = 'calendar-weekdays';
+            const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            weekdayNames.forEach(day => {
+                const weekday = document.createElement('div');
+                weekday.className = 'calendar-weekday';
+                weekday.textContent = day;
+                weekdays.appendChild(weekday);
+            });
+            calendar.appendChild(weekdays);
+            
+            // 날짜 그리드
+            const days = document.createElement('div');
+            days.className = 'calendar-days';
+            
+            const firstDay = new Date(year, month - 1, 1);
+            const lastDay = new Date(year, month, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            const today = new Date();
+            
+            // 6주 * 7일 = 42일 표시
+            for (let i = 0; i < 42; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = currentDate.getDate();
+                
+                // 다른 달 날짜
+                if (currentDate.getMonth() !== month - 1) {
+                    dayElement.classList.add('other-month');
+                }
+                
+                // 주말
+                if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+                    dayElement.classList.add('weekend');
+                }
+                
+                // 오늘
+                if (currentDate.toDateString() === today.toDateString()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // 공휴일 체크
+                if (isHoliday(currentDate)) {
+                    dayElement.classList.add('holiday');
+                }
+                
+                days.appendChild(dayElement);
+            }
+            
+            calendar.appendChild(days);
+            calendarContainer.innerHTML = '';
+            calendarContainer.appendChild(calendar);
+            calendarContainer.style.display = 'block';
+        }
+        
+        // 공휴일 체크 함수 (대한민국 기준 - 정확한 날짜)
+        function isHoliday(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            // 고정 공휴일
+            const fixedHolidays = [
+                { month: 1, day: 1 },   // 신정
+                { month: 3, day: 1 },   // 삼일절
+                { month: 5, day: 5 },   // 어린이날
+                { month: 6, day: 6 },   // 현충일
+                { month: 8, day: 15 },  // 광복절
+                { month: 10, day: 3 },  // 개천절
+                { month: 10, day: 9 },  // 한글날
+                { month: 12, day: 25 }  // 성탄절
+            ];
+            
+            // 고정 공휴일 체크
+            for (const holiday of fixedHolidays) {
+                if (month === holiday.month && day === holiday.day) {
+                    return true;
+                }
+            }
+            
+            // 음력 공휴일 (정확한 날짜)
+            const lunarHolidays = {
+                2024: {
+                    설날: [{ month: 2, day: 9 }, { month: 2, day: 10 }, { month: 2, day: 11 }],
+                    추석: [{ month: 9, day: 16 }, { month: 9, day: 17 }, { month: 9, day: 18 }]
+                },
+                2025: {
+                    설날: [{ month: 1, day: 28 }, { month: 1, day: 29 }, { month: 1, day: 30 }],
+                    추석: [{ month: 10, day: 5 }, { month: 10, day: 6 }, { month: 10, day: 7 }]
+                },
+                2026: {
+                    설날: [{ month: 2, day: 16 }, { month: 2, day: 17 }, { month: 2, day: 18 }],
+                    추석: [{ month: 9, day: 25 }, { month: 9, day: 26 }, { month: 9, day: 27 }]
+                },
+                2027: {
+                    설날: [{ month: 2, day: 6 }, { month: 2, day: 7 }, { month: 2, day: 8 }],
+                    추석: [{ month: 9, day: 14 }, { month: 9, day: 15 }, { month: 9, day: 16 }]
+                },
+                2028: {
+                    설날: [{ month: 1, day: 26 }, { month: 1, day: 27 }, { month: 1, day: 28 }],
+                    추석: [{ month: 10, day: 2 }, { month: 10, day: 3 }, { month: 10, day: 4 }]
+                }
+            };
+            
+            // 해당 연도의 음력 공휴일 체크
+            if (lunarHolidays[year]) {
+                const holidays = lunarHolidays[year];
+                for (const holidayType in holidays) {
+                    for (const holiday of holidays[holidayType]) {
+                        if (month === holiday.month && day === holiday.day) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        // 현재 날짜로 기본값 설정
+        const now = new Date();
+        document.getElementById('year').value = now.getFullYear();
+        document.getElementById('month').value = now.getMonth() + 1;
+    </script>
+
+    <style>
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .header-top {
+                padding: var(--spacing-2xl) var(--spacing-lg);
+            }
+
+            .logo {
+                font-size: var(--font-size-xl);
+            }
+
+            .tab-navigation {
+                padding: 0 var(--spacing-lg);
+            }
+
+            .tab-button {
+                min-width: 120px;
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+
+            .tab-text {
+                font-size: var(--font-size-xs);
+            }
+
+            .content {
+                padding: var(--spacing-2xl) var(--spacing-lg);
+            }
+
+            .form-section {
+                padding: var(--spacing-2xl);
+                margin-bottom: var(--spacing-xl);
+            }
+
+            .form-header h3 {
+                font-size: var(--font-size-lg);
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+            }
+
+            .form-row .form-group {
+                flex: none;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+
+            .info-card {
+                padding: var(--spacing-xl);
+            }
+
+            .result-header {
+                padding: var(--spacing-2xl);
+            }
+
+            .result-header h2 {
+                font-size: var(--font-size-xl);
+            }
+
+            .target-km {
+                font-size: var(--font-size-2xl);
+            }
+
+            .btn {
+                width: 100%;
+                padding: var(--spacing-xl) var(--spacing-2xl);
+                font-size: var(--font-size-lg);
+            }
+
+            select, input {
+                padding: var(--spacing-xl);
+                font-size: var(--font-size-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-top {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .content {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .form-section {
+                padding: var(--spacing-xl);
+            }
+
+            .form-header h3 {
+                font-size: var(--font-size-base);
+            }
+
+            .info-card {
+                padding: var(--spacing-lg);
+            }
+
+            .result-header {
+                padding: var(--spacing-xl);
+            }
+
+            .result-header h2 {
+                font-size: var(--font-size-lg);
+            }
+
+            .target-km {
+                font-size: var(--font-size-xl);
+            }
+        }
+
+        /* 다크 모드 지원 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1e293b;
+                --bg-secondary: #0f172a;
+                --bg-tertiary: #334155;
+                --text-primary: #f1f5f9;
+                --text-secondary: #cbd5e1;
+                --text-tertiary: #94a3b8;
+                --gray-200: #475569;
+                --gray-300: #64748b;
+            }
+
+            .form-section {
+                background: var(--bg-primary);
+                border: 1px solid var(--gray-300);
+            }
+
+            select, input {
+                background: var(--bg-primary);
+                border-color: var(--gray-300);
+                color: var(--text-primary);
+            }
+
+            .info-card {
+                background: var(--bg-primary);
+                border: 1px solid var(--gray-300);
+            }
+        }
+
+        /* 접근성 개선 */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* 포커스 표시 개선 */
+        .btn:focus-visible,
+        select:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--toss-blue);
+            outline-offset: 2px;
+        }
+    </style>
+</body>
+</html>
